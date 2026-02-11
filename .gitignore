@@ -1,0 +1,12 @@
+.idea
+
+cmake-build-debug
+cmake-build-release
+
+build
+
+extern/*
+!extern/networkit-reduction.patch
+
+benchmark/instances/*.edges
+benchmark/instances/raw
