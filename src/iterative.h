@@ -6,8 +6,12 @@
 #include <chrono>
 
 #include "graph.h"
-#include "solution.h"
 
+template <class T>
+struct Solution {
+    std::vector<T> vertex_set;
+    int score;
+};
 
 template <class T>
 class IterativeSolver {

@@ -7,7 +7,6 @@
 #include <cstring>
 
 #include "src/graph.h"
-#include "src/solution.h"
 #include "src/iterative.h"
 
 #include <networkit/auxiliary/Log.hpp>
