@@ -1,6 +1,43 @@
 #!/bin/bash
 set -e
 
+# Parse arguments
+GUROBI_PATH=""
+DOWNLOAD_GUROBI=false
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --gurobi-path)
+            GUROBI_PATH="$2"
+            shift 2
+            ;;
+        --download-gurobi)
+            DOWNLOAD_GUROBI=true
+            shift
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Usage: $0 [--gurobi-path PATH] [--download-gurobi]"
+            exit 1
+            ;;
+    esac
+done
+
+# Check for Gurobi
+if [ -z "$GUROBI_PATH" ] && [ "$DOWNLOAD_GUROBI" = false ]; then
+    if [ -n "$GUROBI_HOME" ]; then
+        GUROBI_PATH="$GUROBI_HOME"
+        echo "Using Gurobi from GUROBI_HOME: $GUROBI_PATH"
+    else
+        echo "Error: Gurobi not specified."
+        echo "Options:"
+        echo "  1. Set GUROBI_HOME environment variable"
+        echo "  2. Use --gurobi-path PATH"
+        echo "  3. Use --download-gurobi to download Gurobi 12.0.1"
+        exit 1
+    fi
+fi
+
 # Create extern directory
 mkdir -p extern
 rm -rf extern/gurobi1201
@@ -8,22 +45,28 @@ rm -rf extern/local
 rm -rf extern/networkit
 cd extern
 
-# Download and setup Gurobi
-if [ ! -f "gurobi12.0.1_linux64.tar.gz" ]; then
-    wget https://packages.gurobi.com/12.0/gurobi12.0.1_linux64.tar.gz
-fi
-
-if [ ! -d "gurobi1201" ]; then
-    tar -xzf gurobi12.0.1_linux64.tar.gz
-fi
-
 # Create local directory structure
 mkdir -p local/{bin,include,lib}
 
+# Setup Gurobi
+if [ "$DOWNLOAD_GUROBI" = true ]; then
+    echo "Downloading Gurobi 12.0.1..."
+    if [ ! -f "gurobi12.0.1_linux64.tar.gz" ]; then
+        wget https://packages.gurobi.com/12.0/gurobi12.0.1_linux64.tar.gz
+    fi
+    
+    if [ ! -d "gurobi1201" ]; then
+        tar -xzf gurobi12.0.1_linux64.tar.gz
+    fi
+    
+    GUROBI_PATH="$(pwd)/gurobi1201/linux64"
+fi
+
 # Copy Gurobi files
-cp -r gurobi1201/linux64/bin/* local/bin/
-cp -r gurobi1201/linux64/include/* local/include/
-cp -r gurobi1201/linux64/lib/* local/lib/
+echo "Using Gurobi from: $GUROBI_PATH"
+cp -r "$GUROBI_PATH"/bin/* local/bin/
+cp -r "$GUROBI_PATH"/include/* local/include/
+cp -r "$GUROBI_PATH"/lib/* local/lib/
 
 # Download NetworKit stable release
 if [ ! -d "networkit" ]; then
