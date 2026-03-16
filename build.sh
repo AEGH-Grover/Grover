@@ -33,7 +33,7 @@ if [ -z "$GUROBI_PATH" ] && [ "$DOWNLOAD_GUROBI" = false ]; then
         echo "Options:"
         echo "  1. Set GUROBI_HOME environment variable"
         echo "  2. Use --gurobi-path PATH"
-        echo "  3. Use --download-gurobi to download Gurobi 12.0.1"
+        echo "  3. Use --download-gurobi to download Gurobi 12.0.1 (only on Linux)"
         exit 1
     fi
 fi
