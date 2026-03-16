@@ -185,7 +185,12 @@ void solve_approx(Graph& graph, NetworKit::Graph& nk_graph, int k, TimePoint sta
     std::cout << "Greedy Time (s): " << elapsed_seconds(greedy_start, Clock::now()) << "\n\n";
 
     TimePoint ls_start = Clock::now();
-    std::vector<int> reduction = graph.compute_reduction(nk_graph);
+    // std::vector<int> reduction = graph.compute_reduction(nk_graph);
+    std::vector<bool> is_suff = graph.get_in_suff_set();// compute_reduction(nk_graph);
+    std::vector<int> reduction(graph.n, 1);
+    for (int i = 0; i < graph.n; ++i) {
+        if (is_suff[i]) { reduction[i] = -1; }
+    }
     NetworKit::GroupClosenessLocalSearch ls(nk_graph, greedy_result, reduction, false, std::numeric_limits<int>::max());
     ls.run();
     std::vector<NetworKit::node> ls_result = ls.groupMaxCloseness();
