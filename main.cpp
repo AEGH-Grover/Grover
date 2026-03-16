@@ -31,7 +31,7 @@ struct Config {
 };
 
 double elapsed_seconds(TimePoint start, TimePoint end) {
-    return std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0;
+    return std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() / 1e9;
 }
 
 void print_solution(const std::vector<int>& solution) {
@@ -54,8 +54,8 @@ void print_usage() {
     std::cout << "  -h, --help              Show this help message\n";
     std::cout << "  --approx                Use fast approximation (greedy + reduction-aware LS)\n";
     std::cout << "  --no-sufficient         Disable sufficient set computation\n";
-    std::cout << "  --no-reductions         Disable data reductions\n";
-    std::cout << "  --no-heuristic          Disable heuristic initialization\n";
+    std::cout << "  --no-reductions         Disable data reductions (no absorbing vertices)\n";
+    std::cout << "  --no-heuristic          Disable heuristic initialization (sets d(v) = 2)\n";
     std::cout << "  --init <file>           Use initial solution from file\n\n";
     std::cout << "EXAMPLES:\n";
     std::cout << "  grover graph.edges 10\n";
