@@ -178,4 +178,18 @@ See individual source files for licensing information.
 
 ## Citation
 
-If you use Grover in your research, please cite the relevant paper (add citation here).
+If you use *Grover* in your research, please cite the following paper:
+
+[Advances in Exact and Approximate Group Closeness Centrality Maximization](https://arxiv.org/abs/2603.25642)
+
+```
+@misc{Schulz2026,
+  title        = {Advances in Exact and Approximate Group Closeness Centrality Maximization},
+  author       = {Christian Schulz and Jakob Ternes and Henning Woydt},
+  year         = {2026},
+  eprint       = {2603.25642},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.DS},
+  url          = {https://arxiv.org/abs/2603.25642}
+}
+```
