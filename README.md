@@ -152,19 +152,6 @@ Fast approximation using:
 1. **Greedy Algorithm** - NetworKit's GroupCloseness for initial solution
 2. **Reduction-Aware Local Search** - Skips dominated vertices during local search
 
-**Benefits:**
-- No Gurobi dependency for this mode
-- Much faster than exact solver
-- Suitable for large graphs where exact solutions are infeasible
-
-### Performance
-
-For *k = 1*, the solver returns the exact solution using a greedy algorithm in linear time.
-
-For *k > 1*:
-- **Exact mode**: Uses iterative approach with branch-and-bound
-- **Approx mode**: Greedy + local search (typically seconds vs minutes/hours)
-
 ## Dependencies
 
 - **CMake** 3.10+
@@ -174,8 +161,28 @@ For *k > 1*:
 
 ## License
 
-See individual source files for licensing information.
+This project is licensed under the [MIT License](LICENSE).
 
 ## Citation
 
-If you use Grover in your research, please cite the relevant paper (add citation here).
+If you use Grover in your research, please cite the following publication:
+
+> Christian Schulz, Jakob Ternes, and Henning Woydt. **"Advances in Exact and Approximate Group Closeness Centrality Maximization"**. In *34th Annual European Symposium on Algorithms (ESA 2026)*, Leibniz International Proceedings in Informatics (LIPIcs), Vol. 388, pp. 3:1–3:19, Schloss Dagstuhl – Leibniz-Zentrum für Informatik, 2026.  
+> DOI: [10.4230/LIPIcs.ESA.2026.3](https://doi.org/10.4230/LIPIcs.ESA.2026.3)
+
+```bibtex
+@InProceedings{schulz_et_al:LIPIcs.ESA.2026.3,
+  author    = {Schulz, Christian and Ternes, Jakob and Woydt, Henning},
+  title     = {{Advances in Exact and Approximate Group Closeness Centrality Maximization}},
+  booktitle = {34th Annual European Symposium on Algorithms (ESA 2026)},
+  pages     = {3:1--3:19},
+  series    = {Leibniz International Proceedings in Informatics (LIPIcs)},
+  volume    = {388},
+  editor    = {Bille, Philip and Pettie, Seth and Storandt, Sabine},
+  publisher = {Schloss Dagstuhl -- Leibniz-Zentrum f{\"u}r Informatik},
+  address   = {Dagstuhl, Germany},
+  year      = {2026},
+  doi       = {10.4230/LIPIcs.ESA.2026.3},
+  url       = {https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ESA.2026.3}
+}
+```
