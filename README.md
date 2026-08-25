@@ -152,19 +152,6 @@ Fast approximation using:
 1. **Greedy Algorithm** - NetworKit's GroupCloseness for initial solution
 2. **Reduction-Aware Local Search** - Skips dominated vertices during local search
 
-**Benefits:**
-- No Gurobi dependency for this mode
-- Much faster than exact solver
-- Suitable for large graphs where exact solutions are infeasible
-
-### Performance
-
-For *k = 1*, the solver returns the exact solution using a greedy algorithm in linear time.
-
-For *k > 1*:
-- **Exact mode**: Uses iterative approach with branch-and-bound
-- **Approx mode**: Greedy + local search (typically seconds vs minutes/hours)
-
 ## Dependencies
 
 - **CMake** 3.10+
@@ -174,22 +161,31 @@ For *k > 1*:
 
 ## License
 
-See individual source files for licensing information.
+This project is licensed under the [MIT License](LICENSE).
 
 ## Citation
 
-If you use *Grover* in your research, please cite the following paper:
+If you use *Grover* in your research, please cite the following publication:
 
-[Advances in Exact and Approximate Group Closeness Centrality Maximization](https://arxiv.org/abs/2603.25642)
+> Christian Schulz, Jakob Ternes, and Henning Woydt. **"Advances in Exact and Approximate Group Closeness Centrality Maximization"**. In *34th Annual European Symposium on Algorithms (ESA 2026)*, Leibniz International Proceedings in Informatics (LIPIcs), Vol. 388, pp. 3:1–3:19, Schloss Dagstuhl – Leibniz-Zentrum für Informatik, 2026.  
+> DOI: [10.4230/LIPIcs.ESA.2026.3](https://doi.org/10.4230/LIPIcs.ESA.2026.3)
 
-```
-@misc{Schulz2026,
-  title        = {Advances in Exact and Approximate Group Closeness Centrality Maximization},
-  author       = {Christian Schulz and Jakob Ternes and Henning Woydt},
-  year         = {2026},
-  eprint       = {2603.25642},
-  archivePrefix= {arXiv},
-  primaryClass = {cs.DS},
-  url          = {https://arxiv.org/abs/2603.25642}
+```bibtex
+@InProceedings{schulz_et_al:LIPIcs.ESA.2026.3,
+  author    = {Schulz, Christian and Ternes, Jakob and Woydt, Henning},
+  title     = {{Advances in Exact and Approximate Group Closeness Centrality Maximization}},
+  booktitle = {34th Annual European Symposium on Algorithms (ESA 2026)},
+  pages     = {3:1--3:19},
+  series    = {Leibniz International Proceedings in Informatics (LIPIcs)},
+  ISBN      = {978-3-95977-445-1},
+  ISSN      = {1868-8969},
+  year      = {2026},
+  volume    = {388},
+  editor    = {Bille, Philip and Pettie, Seth and Storandt, Sabine},
+  publisher = {Schloss Dagstuhl -- Leibniz-Zentrum f{\"u}r Informatik},
+  address   = {Dagstuhl, Germany},
+  URL       = {https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ESA.2026.3},
+  URN       = {urn:nbn:de:0030-drops-271394},
+  doi       = {10.4230/LIPIcs.ESA.2026.3}
 }
 ```
