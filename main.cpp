@@ -5,6 +5,7 @@
 #include <chrono>
 #include <vector>
 #include <cstring>
+#include <cstdint>
 
 #include "src/graph.h"
 #include "src/iterative.h"
@@ -165,13 +166,81 @@ NetworKit::Graph convert_to_networkit(const Graph& graph) {
     return nk_graph;
 }
 
-void solve_k1(const NetworKit::Graph& graph, TimePoint start_time) {
-    NetworKit::GroupCloseness gc(graph, 1);
-    gc.run();
-    std::vector<NetworKit::node> result = gc.groupMaxCloseness();
-    
-    std::cout << "Exact Score: " << gc.computeFarness(result) << "\n";
-    std::cout << "Solution: {" << result[0] << "}\n";
+// Exact solution for k == 1: BFS from every vertex, keep the one with minimum farness.
+// A BFS is aborted as soon as a lower bound on its farness reaches the best known farness.
+void solve_k1(Graph& graph, TimePoint start_time) {
+    const size_t n = graph.n;
+    // A dominated vertex v (N[v] subset of N[w] for a neighbor w) never has smaller
+    // farness than w, so it can be skipped as a source.
+    const std::vector<bool> in_suff_set = graph.get_in_suff_set();
+    long long best_farness = std::numeric_limits<long long>::max();
+    int best_vertex = 0;
+
+    // Compact CSR copy of the adjacency (4-byte entries instead of 8-byte Edge structs).
+    std::vector<uint32_t> offsets(n + 1);
+    for (size_t v = 0; v <= n; ++v) offsets[v] = (uint32_t) graph.min_index_for[v];
+    std::vector<uint32_t> targets(graph.adj_array.size());
+    for (size_t i = 0; i < targets.size(); ++i) targets[i] = graph.adj_array[i].target;
+
+    // visited[v] == stamp  <=>  v was reached in the current BFS (no O(n) reset per source).
+    std::vector<uint32_t> visited(n, 0);
+    std::vector<uint32_t> queue(n);
+    uint32_t stamp = 0;
+
+    // Process sources by decreasing degree: high-degree vertices tend to be central, so a
+    // good best_farness is found early and the cutoff prunes the remaining BFS runs sooner.
+    std::vector<uint32_t> sources;
+    for (size_t v = 0; v < n; ++v) {
+        if (in_suff_set[v]) sources.push_back((uint32_t) v);
+    }
+    std::stable_sort(sources.begin(), sources.end(), [&](uint32_t a, uint32_t b) {
+        return offsets[a + 1] - offsets[a] > offsets[b + 1] - offsets[b];
+    });
+
+    for (const uint32_t s : sources) {
+        ++stamp;
+        size_t head = 0, tail = 0;
+        queue[tail++] = (uint32_t) s;
+        visited[s] = stamp;
+        long long farness = 0;
+        long long level = 0;  // distance of the vertices in [head, level_end)
+        bool pruned = false;
+
+        // Level-synchronous BFS: the bound is checked once per level.
+        while (head < tail) {
+            const size_t level_end = tail;
+            ++level;
+            long long gamma = 0;  // edges leaving the newly discovered level
+            for (; head < level_end; ++head) {
+                const uint32_t u = queue[head];
+                for (uint32_t i = offsets[u]; i < offsets[u + 1]; ++i) {
+                    const uint32_t w = targets[i];
+                    if (visited[w] != stamp) {
+                        visited[w] = stamp;
+                        queue[tail++] = w;
+                        gamma += (long long) (offsets[w + 1] - offsets[w]) - 1;
+                    }
+                }
+            }
+            farness += level * (long long) (tail - level_end);
+            // At most gamma undiscovered vertices can be at distance level + 1 (each needs an
+            // edge from the newest level); all others are at distance >= level + 2.
+            const long long rem = (long long) (n - tail);
+            const long long next = std::min(gamma, rem);
+            if (farness + next * (level + 1) + (rem - next) * (level + 2) >= best_farness) {
+                pruned = true;
+                break;
+            }
+        }
+
+        if (!pruned && farness < best_farness) {
+            best_farness = farness;
+            best_vertex = (int) s;
+        }
+    }
+
+    std::cout << "Exact Score: " << best_farness << "\n";
+    std::cout << "Solution: {" << best_vertex << "}\n";
     std::cout << "Elapsed Time (Seconds): " << elapsed_seconds(start_time, Clock::now()) << "\n";
 }
 
@@ -295,7 +364,7 @@ int main(int argc, char** argv) {
     std::cout << "Number of edges: " << nk_graph.numberOfEdges() << "\n";
 
     if (config.k == 1) {
-        solve_k1(nk_graph, start_time);
+        solve_k1(graph, start_time);
     } else if (config.approx_mode) {
         solve_approx(graph, nk_graph, config.k, start_time);
     } else {
